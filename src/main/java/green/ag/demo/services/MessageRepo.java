@@ -1,7 +1,7 @@
 package green.ag.demo.services;
 
-import org.openapitools.model.RealmMessage;
+import green.ag.demo.database.RealmMessageData;
 import org.springframework.data.repository.CrudRepository;
 
-public interface MessageRepo extends CrudRepository<RealmMessage,Integer> {
+public interface MessageRepo extends CrudRepository<RealmMessageData,Integer> {
 }
