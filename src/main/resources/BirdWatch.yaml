@@ -1,0 +1,143 @@
+openapi: "3.0.2"
+info:
+  title: Messenger bird API
+  description: Tower system for messenger birds
+  version: 1.0.0
+servers:
+  - url: 'https://localhost:8080'
+
+paths:
+  /listBirds:
+    get:
+      tags:
+        - "Information"
+        - "Birds"
+      summary: "endpoint to retrieve information on birds currently in the tower"
+      operationId: getBirdsList
+      responses:
+        200:
+          description: "Successfully retrieved data about current birds in tower"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BirdList"
+        403:
+          description: "unauthorized access outcome"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /receiveMessage:
+    post:
+      tags:
+        - "Information"
+      summary: "Tower to receive a message via a bird"
+      operationId: receiveBirdMessage
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RealmMessage"
+
+      responses:
+        200:
+          description: "Message received. Response will be delivered as soon as we can."
+
+        400:
+          description: "Bad request, incoming message not correctly formatted"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ParsingError"
+
+components:
+  schemas:
+    BirdList:
+      type: object
+      properties:
+        birds:
+          type: array
+          items:
+            $ref: "#/components/schemas/Bird"
+    Bird:
+      type: object
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+        description:
+          type: string
+          description: "Visual description of the bird"
+        isReadyToFly:
+          type: boolean
+        needsFeed:
+          type: boolean
+        country:
+          type: string
+          description: "enum Name of the country where the bird originates"
+          example: "Imperium, SandSolr, MountainPeople, GreatMarsh"
+        species:
+          $ref: "#/components/schemas/BirdSpecies"
+        colour:
+          type: string
+
+    DeliveredMessage:
+      type: object
+      properties:
+        deliveryBird:
+          $ref: "#/components/schemas/Bird"
+        deliveredMessage:
+          $ref: "#/components/schemas/RealmMessage"
+
+    Error:
+      type: object
+      properties:
+        code:
+          type: number
+        message:
+          type: string
+
+    ParsingError:
+      type: object
+      properties:
+        error:
+          $ref: "#/components/schemas/Error"
+        validationFields:
+          type: array
+          items:
+            type: string
+
+    BirdSpecies:
+      type: object
+      properties:
+        name:
+          type: string
+        plumage:
+          type: string
+
+    RealmMessage:
+      type: object
+      properties:
+        text:
+          type: string
+          example: "Very important correspondence to gather army for a battle"
+        sender:
+          $ref: "#/components/schemas/Person"
+
+    Person:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Joanna"
+        importance:
+          type: integer
+          example: 4
+        title:
+          type: string
+          example: "Lady of the fog fields"
+        country:
+          type: string
+          example: "SandSolr"
