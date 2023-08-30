@@ -4,14 +4,13 @@ info:
   description: Tower system for messenger birds
   version: 1.0.0
 servers:
-  - url: 'https://localhost:8080'
+  - url: 'http://localhost:8080'
 
 paths:
-  /listBirds:
+  /tower/listBirds:
     get:
       tags:
         - "Information"
-        - "Birds"
       summary: "endpoint to retrieve information on birds currently in the tower"
       operationId: getBirdsList
       responses:
@@ -27,7 +26,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-  /receiveMessage:
+  /tower/receiveMessage:
     post:
       tags:
         - "Information"
