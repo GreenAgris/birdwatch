@@ -6,12 +6,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.openapitools.api.TowerApi;
 import org.openapitools.model.BirdList;
 import org.openapitools.model.RealmMessage;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Slf4j
 public class BirdController  implements TowerApi {
+
+    static private boolean isPopulated=false;
 
     private BirdsFacade birdsFacade;
     private MessageFacade messageFacade;
@@ -24,12 +27,22 @@ public class BirdController  implements TowerApi {
     @Override
     public ResponseEntity<BirdList> getBirdsList() {
         LOGGER.info("Received bird listing request");
-        return TowerApi.super.getBirdsList();
+        return ResponseEntity.ok(birdsFacade.getAllBirdsInTower());
     }
 
     @Override
     public ResponseEntity<Void> receiveBirdMessage(RealmMessage realmMessage) {
         LOGGER.info("Received message via bird");
-        return TowerApi.super.receiveBirdMessage(realmMessage);
+        messageFacade.readMessage(realmMessage);
+        return (ResponseEntity<Void>) ResponseEntity.accepted();
+    }
+
+    @Override
+    public ResponseEntity createBirdListing() {
+        if(!isPopulated){
+            birdsFacade.createBirds();
+            isPopulated = true;
+        }
+        return new ResponseEntity<>(HttpStatus.I_AM_A_TEAPOT);
     }
 }
